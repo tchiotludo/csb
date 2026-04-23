@@ -451,6 +451,7 @@ function onKeydown(e) {
             const query = searchInput.value;
             const url = queryItem.url.replace(/%s/g, encodeURIComponent(query));
             exitQueryMode();
+            hide();
             chrome.runtime.sendMessage({action: 'open-in-sidebar', url});
         }
         return;
