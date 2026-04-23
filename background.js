@@ -1,23 +1,6 @@
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.sidePanel.setPanelBehavior({openPanelOnActionClick: false}).catch(() => {
-    });
-    chrome.sidePanel.setOptions({enabled: true, path: 'sidebar/sidebar.html'}).catch(() => {
-    });
-    chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds: [1],
-        addRules: [{
-            id: 1,
-            priority: 1,
-            action: {
-                type: 'modifyHeaders',
-                responseHeaders: [
-                    {header: 'x-frame-options', operation: 'remove'},
-                    {header: 'content-security-policy', operation: 'remove'},
-                ]
-            },
-            condition: {resourceTypes: ['sub_frame']}
-        }]
-    }).catch(console.error);
+    chrome.sidePanel.setPanelBehavior({openPanelOnActionClick: false}).catch(() => {});
+    chrome.sidePanel.setOptions({enabled: true, path: 'sidebar/sidebar.html'}).catch(() => {});
 });
 
 chrome.commands.onCommand.addListener((command) => {
@@ -36,7 +19,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({ok: false});
             return;
         }
-        chrome.storage.local.set({sidebarUrl: message.url});
+        chrome.sidePanel.setOptions({tabId, path: message.url}).catch(console.error);
         chrome.sidePanel.open({tabId}).catch(console.error);
         sendResponse({ok: true});
     }
