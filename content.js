@@ -385,6 +385,16 @@ function init() {
 
     shadowRoot.appendChild(backdrop);
     document.documentElement.appendChild(shadowHost);
+
+    shadowHost.addEventListener('keydown', (e) => {
+        if (isVisible) e.stopPropagation();
+    });
+    shadowHost.addEventListener('keyup', (e) => {
+        if (isVisible) e.stopPropagation();
+    });
+    shadowHost.addEventListener('keypress', (e) => {
+        if (isVisible) e.stopPropagation();
+    });
 }
 
 async function show() {

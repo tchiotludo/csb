@@ -2,10 +2,12 @@ const emptyState = document.getElementById('empty-state');
 const frame = document.getElementById('frame');
 const openTabBtn = document.getElementById('open-tab-btn');
 
+let currentUrl = null;
+
 openTabBtn.addEventListener('click', async () => {
-    if (frame.src) {
+    if (currentUrl) {
         const {id} = await chrome.windows.getCurrent();
-        chrome.tabs.create({url: frame.src});
+        chrome.tabs.create({url: currentUrl});
         chrome.sidePanel.close({windowId: id});
     }
 });
@@ -14,7 +16,10 @@ function loadUrl(url) {
     emptyState.hidden = true;
     frame.hidden = false;
     openTabBtn.hidden = false;
-    frame.src = url;
+    currentUrl = url;
+    const u = new URL(url);
+    u.searchParams.set('_r', Math.random().toString(36).slice(2));
+    frame.src = u.toString();
 }
 
 chrome.storage.local.get('sidebarUrl').then(({sidebarUrl}) => {
