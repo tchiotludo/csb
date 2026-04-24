@@ -9,7 +9,11 @@ const STYLES = `
     inset: 0;
     z-index: 2147483647;
     pointer-events: none;
+  }
+
+  *, *::before, *::after {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    box-sizing: border-box;
   }
 
   [hidden] { display: none !important; }

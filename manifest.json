@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Quick Launch",
+  "name": "CSB",
   "version": "1.0.0",
   "description": "Ctrl+Space to search and open your URLs in Chrome's sidebar",
   "permissions": [
@@ -39,7 +39,7 @@
         "default": "Ctrl+Space",
         "mac": "Ctrl+Space"
       },
-      "description": "Open Quick Launch"
+      "description": "Open CSB"
     }
   },
   "icons": {
