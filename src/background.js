@@ -1,6 +1,6 @@
 chrome.runtime.onInstalled.addListener(() => {
     chrome.sidePanel.setPanelBehavior({openPanelOnActionClick: false}).catch(() => {});
-    chrome.sidePanel.setOptions({enabled: true, path: 'sidebar/sidebar.html'}).catch(() => {});
+    chrome.sidePanel.setOptions({enabled: false}).catch(() => {});
 });
 
 chrome.commands.onCommand.addListener((command) => {
@@ -19,14 +19,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({ok: false});
             return;
         }
-        chrome.sidePanel.setOptions({tabId, path: message.url}).catch(console.error);
+        chrome.sidePanel.setOptions({tabId, enabled: true, path: message.url}).catch(console.error);
         chrome.sidePanel.open({tabId}).catch(console.error);
         sendResponse({ok: true});
     }
 
     if (message.action === 'close-sidebar') {
         const tabId = sender.tab?.id;
-        if (tabId) chrome.sidePanel.close({tabId}).catch(console.error);
+        if (tabId) {
+            chrome.sidePanel.close({tabId}).catch(console.error);
+            chrome.sidePanel.setOptions({tabId, enabled: false}).catch(() => {});
+        }
         sendResponse({ok: true});
     }
 
