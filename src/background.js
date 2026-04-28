@@ -21,16 +21,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         chrome.sidePanel.setOptions({tabId, enabled: true, path: message.url}).catch(console.error);
         chrome.sidePanel.open({tabId}).catch(console.error);
+        chrome.storage.session.set({sidebarOpen: true});
         sendResponse({ok: true});
     }
 
     if (message.action === 'close-sidebar') {
         const tabId = sender.tab?.id;
         if (tabId) {
-            chrome.sidePanel.close({tabId}).catch(console.error);
+            chrome.sidePanel.close({tabId}).catch(() => {});
             chrome.sidePanel.setOptions({tabId, enabled: false}).catch(() => {});
         }
+        chrome.storage.session.set({sidebarOpen: false});
         sendResponse({ok: true});
+    }
+
+    if (message.action === 'get-sidebar-state') {
+        chrome.storage.session.get('sidebarOpen').then(data => {
+            sendResponse({sidebarOpen: !!data.sidebarOpen});
+        });
+        return true;
     }
 
     if (message.action === 'fetch-favicon') {

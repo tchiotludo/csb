@@ -331,9 +331,10 @@ let selectedIndex = 0;
 let isVisible = false;
 let mode = 'selection'; // 'selection' | 'query'
 let queryItem = null;
+let sidebarOpen = false;
 
 function getDisplayItems() {
-    return [...filtered, CLOSE_ITEM, SETTINGS_ITEM];
+    return sidebarOpen ? [...filtered, CLOSE_ITEM, SETTINGS_ITEM] : [...filtered, SETTINGS_ITEM];
 }
 
 function init() {
@@ -404,8 +405,12 @@ function init() {
 async function show() {
     if (!shadowHost) init();
 
-    const data = await chrome.storage.sync.get('urls');
+    const [data, stateResponse] = await Promise.all([
+        chrome.storage.sync.get('urls'),
+        new Promise(resolve => chrome.runtime.sendMessage({action: 'get-sidebar-state'}, res => resolve(res))),
+    ]);
     allItems = data.urls || [];
+    sidebarOpen = stateResponse?.sidebarOpen || false;
     filtered = [...allItems];
     selectedIndex = 0;
     mode = 'selection';
@@ -561,9 +566,10 @@ function renderResults(scrollIntoView = false) {
         html += filtered.map((item, i) => renderItem(item, i)).join('');
     }
 
+    const displayItems = getDisplayItems();
+    const footerItems = displayItems.slice(filtered.length);
     html += `<div class="settings-divider"></div>`;
-    html += renderItem(CLOSE_ITEM, filtered.length);
-    html += renderItem(SETTINGS_ITEM, filtered.length + 1);
+    html += footerItems.map((item, i) => renderItem(item, filtered.length + i)).join('');
 
     resultsEl.innerHTML = html;
 
